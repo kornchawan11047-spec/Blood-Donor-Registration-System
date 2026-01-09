@@ -1,0 +1,92 @@
+// ตารางผู้บริจาคเลือด
+Table Donor {
+  d_id     varchar(10)  [pk]               // Primary Key
+  d_cid    varchar(20)  [not null, unique] // เลขบัตร / CID
+  d_name   varchar(100) [not null]
+  d_bdate  date
+  d_age    int
+  d_gen    varchar(20)
+  d_bg     varchar(5)
+  d_rh     varchar(5)
+  d_count  int
+  d_addr   varchar(255)
+  d_tel    varchar(20)
+  d_nat    varchar(50)
+  d_lastdt date
+}
+
+// ตารางข้อมูลคัดกรองก่อนบริจาค
+Table PreDonationScreen {
+  ps_id     varchar(10) [pk]       // Primary Key
+  ps_did    varchar(10) [not null] // FK → Donor.d_id
+  ps_date   date       [not null]
+  ps_wt     float
+  ps_bp     varchar(20)
+  ps_pr     varchar(20)
+  ps_temp   float
+  ps_hb     float
+  ps_cd     text
+  ps_med    text
+  ps_surg   text
+  ps_ttpr   text
+  ps_inf    text
+  ps_preg   text
+  ps_travel text
+  ps_rest   text
+  ps_result varchar(50)
+  ps_rbc    float
+}
+
+// ตารางประวัติการบริจาคเลือด
+Table Donation {
+  dt_id   varchar(10) [pk]
+  dt_did  varchar(10) [not null] // FK → Donor.d_id
+  dt_dt   datetime    [not null]
+  dt_loc  varchar(100)
+  dt_type varchar(50)
+  dt_vol  int
+  dt_symd text
+  dt_syma text
+  dt_note text
+}
+
+// ตารางคลังเลือด
+Table BloodBag {
+  bb_id    varchar(10) [pk]
+  bb_dtid  varchar(10) [not null] // FK → Donation.dt_id
+  bb_did   varchar(10) [not null] // FK → Donor.d_id
+  bb_bg    varchar(5)
+  bb_date  date
+  bb_exp   date
+  bb_status varchar(50)
+}
+
+// ตารางผลตรวจคัดกรองเลือด
+Table LabTest {
+  lt_id     varchar(10) [pk]
+  lt_dtid   varchar(10) [not null] // FK → Donation.dt_id
+  lt_did    varchar(10) [not null] // FK → Donor.d_id
+  lt_date   date
+  lt_hiv    varchar(20)
+  lt_hbv    varchar(20)
+  lt_hcv    varchar(20)
+  lt_syp    varchar(20)
+  lt_mal    varchar(20)
+  lt_bt     varchar(20)
+  lt_unit   varchar(100)
+  lt_result varchar(50)
+}
+
+// ความสัมพันธ์ (Foreign Keys)
+Ref: PreDonationScreen.ps_did > Donor.d_id
+
+Ref: Donation.dt_did > Donor.d_id
+
+Ref: BloodBag.bb_dtid > Donation.dt_id
+Ref: BloodBag.bb_did  > Donor.d_id
+
+Ref: LabTest.lt_dtid > Donation.dt_id
+Ref: LabTest.lt_did  > Donor.d_id
+
+
+Ref: "BloodBag"."bb_bg" < "BloodBag"."bb_did"
